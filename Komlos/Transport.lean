@@ -8,12 +8,11 @@ module
 public import Komlos.ShiftDistance
 
 /-!
-# Transporting distributions along an injective additive map
+# Pushforward along injective additive maps
 
-The near-invariant distribution is built on the integer lattice `Fin d → ℤ` and then transported
-to `Fin d → ℝ` by the injective additive map `g ↦ g / N`. This file records that pushing
-forward along an injective additive map preserves mass, total variation distance and shift
-distances.
+Pushforward along an injective additive map preserves mass, total variation distance, and
+shift distance. These results allow the integer-lattice distribution to be mapped to the
+real grid by `g ↦ g / N` when `N > 0`.
 -/
 
 @[expose] public section
@@ -34,7 +33,7 @@ variable {e : E →+ F} {he : Function.Injective e}
   Finsupp.embDomain_apply_self _ _ _
 
 lemma sum_push {N : Type*} [AddCommMonoid N] (P : E →₀ ℝ) (g : F → ℝ → N) :
-    (push e he P).sum g = P.sum fun x r => g (e x) r := Finsupp.sum_embDomain
+    (push e he P).sum g = P.sum fun x r ↦ g (e x) r := Finsupp.sum_embDomain
 
 lemma support_push (P : E →₀ ℝ) : (push e he P).support = P.support.map ⟨e, he⟩ :=
   Finsupp.support_embDomain _ _
@@ -64,7 +63,7 @@ lemma tr_push (u : E) (P : E →₀ ℝ) : tr (e u) (push e he P) = push e he (t
 lemma shiftDist_push (u : E) (P : E →₀ ℝ) : shiftDist (push e he P) (e u) = shiftDist P u := by
   rw [shiftDist, tr_push, tvDist_push, shiftDist]
 
-lemma mean_push [Module ℝ F] (P : E →₀ ℝ) : mean (push e he P) = P.sum fun x r => r • e x := by
+lemma mean_push [Module ℝ F] (P : E →₀ ℝ) : mean (push e he P) = P.sum fun x r ↦ r • e x := by
   rw [mean, sum_push]
 
 end Komlos

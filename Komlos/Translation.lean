@@ -10,8 +10,8 @@ public import Komlos.Distribution
 /-!
 # Translation of finitely supported distributions
 
-`Komlos.tr u P` is the translate of `P` by `u`, that is, the distribution of `X + u` when
-`X ∼ P`. Translation preserves mass and shifts the mean by `u`.
+`Komlos.tr u P x = P (x - u)`. Translation preserves mass and changes the mean by
+`mass P • u`, which is `u` when `P` is a probability distribution.
 -/
 
 @[expose] public section
@@ -29,7 +29,7 @@ noncomputable def tr (u : E) (P : E →₀ ℝ) : E →₀ ℝ :=
   simp [tr, Equiv.addRight, sub_eq_add_neg]
 
 lemma sum_tr (u : E) (P : E →₀ ℝ) {N : Type*} [AddCommMonoid N] (g : E → ℝ → N) :
-    (tr u P).sum g = P.sum fun x r => g (x + u) r :=
+    (tr u P).sum g = P.sum fun x r ↦ g (x + u) r :=
   Finsupp.sum_equivMapDomain _ _ _
 
 lemma tr_tr (a b : E) (P : E →₀ ℝ) : tr a (tr b P) = tr (a + b) P := by
