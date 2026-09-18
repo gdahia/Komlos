@@ -4,12 +4,11 @@ version: "v0.4"
 project:
   name: "Komlós conjecture"
   description: >-
-    Lean 4 proofs of the Komlós bound with constant 36 and the Beck–Fiala bound with
-    constant 36. The Komlós statement gives signs for finitely many vectors of Euclidean
+    Lean4 formalization of the Komlós bound with constant 36 following the Lovett--Karingula
+    exposition. The Komlós statement gives signs for finitely many vectors of Euclidean
     norm at most 1 so that the signed sum has supremum norm at most 36. The Beck–Fiala
     statement gives a vertex colouring with edge discrepancy at most 36√t when every
-    vertex belongs to at most t edges. The library also states these bounds in terms of
-    matrix discrepancy.
+    vertex belongs to at most t edges.
   authors:
     - "Gabriel Dahia"
   license: "Apache-2.0"
