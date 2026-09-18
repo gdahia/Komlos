@@ -55,39 +55,12 @@ lemma mean_eq_sum [AddCommGroup E] [Module ℝ E] {P : E →₀ ℝ} {s : Finset
 lemma mass_add (P Q : E →₀ ℝ) : mass (P + Q) = mass P + mass Q :=
   Finsupp.sum_add_index' (by simp) (by simp)
 
-lemma mean_add [AddCommGroup E] [Module ℝ E] (P Q : E →₀ ℝ) : mean (P + Q) = mean P + mean Q :=
-  Finsupp.sum_add_index' (fun a => zero_smul ℝ a) (fun a b₁ b₂ => add_smul b₁ b₂ a)
-
-lemma mass_single (x : E) (r : ℝ) : mass (Finsupp.single x r) = r :=
-  Finsupp.sum_single_index rfl
-
-lemma mean_single [AddCommGroup E] [Module ℝ E] (x : E) (r : ℝ) :
-    mean (Finsupp.single x r) = r • x :=
-  Finsupp.sum_single_index (zero_smul ℝ x)
-
-lemma mass_finsetSum {ι : Type*} (t : Finset ι) (f : ι → E →₀ ℝ) :
-    mass (∑ i ∈ t, f i) = ∑ i ∈ t, mass (f i) := by
-  classical
-  induction t using Finset.induction with
-  | empty => simp [mass]
-  | insert a t ha ih => rw [Finset.sum_insert ha, mass_add, ih, Finset.sum_insert ha]
-
-lemma mean_finsetSum {ι : Type*} [AddCommGroup E] [Module ℝ E] (t : Finset ι) (f : ι → E →₀ ℝ) :
-    mean (∑ i ∈ t, f i) = ∑ i ∈ t, mean (f i) := by
-  classical
-  induction t using Finset.induction with
-  | empty => simp [mean]
-  | insert a t ha ih => rw [Finset.sum_insert ha, mean_add, ih, Finset.sum_insert ha]
-
 lemma mass_smul (c : ℝ) (P : E →₀ ℝ) : mass (c • P) = c * mass P := by
-  rw [mass, Finsupp.sum_smul_index' (by simp), mass, Finsupp.sum, Finsupp.sum, Finset.mul_sum]
-  congr
+  simp [mass, Finsupp.sum_smul_index', Finsupp.mul_sum]
 
 lemma mean_smul [AddCommGroup E] [Module ℝ E] (c : ℝ) (P : E →₀ ℝ) :
     mean (c • P) = c • mean P := by
-  rw [mean, Finsupp.sum_smul_index' (by simp), mean, Finsupp.sum, Finsupp.sum, Finset.smul_sum]
-  congr with x
-  rw [smul_eq_mul, mul_smul]
+  simp [mean, Finsupp.sum_smul_index', Finsupp.smul_sum, mul_smul]
 
 lemma mass_nonneg {P : E →₀ ℝ} (h : ∀ x, 0 ≤ P x) : 0 ≤ mass P :=
   Finset.sum_nonneg fun x _ => h x
@@ -135,12 +108,8 @@ lemma mean_sup_add_mean_inf [AddCommGroup E] [Module ℝ E] (P Q : E →₀ ℝ)
   rw [Finsupp.sup_apply, Finsupp.inf_apply, ← add_smul, ← add_smul, add_comm, min_add_max]
 
 lemma mean_mem_convexHull [AddCommGroup E] [Module ℝ E] {S : E →₀ ℝ} (hS : IsDist S)
-    {s : Finset E} (h : S.support ⊆ s) : mean S ∈ convexHull ℝ (s : Set E) := by
-  have hsum : ∑ x ∈ s, S x = 1 := by rw [← mass_eq_sum h, hS.mass_eq]
-  have hmem := Finset.centerMass_id_mem_convexHull (R := ℝ) s (w := S)
-    (fun i _ => hS.nonneg i) (by rw [hsum]; norm_num)
-  rw [Finset.centerMass, hsum, inv_one, one_smul] at hmem
-  simp only [id_eq] at hmem
-  rwa [← mean_eq_sum h] at hmem
+    {s : Finset E} (h : S.support ⊆ s) : mean S ∈ convexHull ℝ (s : Set E) :=
+  Finset.mem_convexHull'.2
+    ⟨S, fun x _ => hS.nonneg x, by rw [← mass_eq_sum h, hS.mass_eq], (mean_eq_sum h).symm⟩
 
 end Komlos

@@ -85,6 +85,25 @@ lemma split_apply_of_ne (v : E) (P : E →₀ ℝ) {b : ℝ} (h0 : b ≠ 0) (h1 
   rw [split, Finsupp.add_apply, embDomain_incl_of_ne h0, embDomain_incl_of_ne h1, add_zero]
 
 omit [Module ℝ E] in
+lemma snd_eq_zero_or_one_of_mem_support_split {v : E} {P : E →₀ ℝ} {y : E × ℝ}
+    (hy : y ∈ (split v P).support) : y.2 = 0 ∨ y.2 = 1 := by
+  obtain ⟨x, b⟩ := y
+  by_contra! h
+  exact Finsupp.mem_support_iff.1 hy (split_apply_of_ne v P h.1 h.2 x)
+
+omit [Module ℝ E] in
+lemma mk_zero_mem_support_split {P : E →₀ ℝ} (hP : ∀ x, 0 ≤ P x) (v x : E) :
+    (x, 0) ∈ (split v P).support ↔ x + v ∈ P.support ∨ x - v ∈ P.support := by
+  simp only [Finsupp.mem_support_iff, split_apply_zero]
+  grind [hP (x + v), hP (x - v)]
+
+omit [Module ℝ E] in
+lemma mk_one_mem_support_split {P : E →₀ ℝ} (hP : ∀ x, 0 ≤ P x) (v x : E) :
+    (x, 1) ∈ (split v P).support ↔ x + v ∈ P.support ∧ x - v ∈ P.support := by
+  simp only [Finsupp.mem_support_iff, split_apply_one]
+  grind [hP (x + v), hP (x - v)]
+
+omit [Module ℝ E] in
 lemma split_nonneg {P : E →₀ ℝ} (hP : ∀ x, 0 ≤ P x) (v : E) (y : E × ℝ) : 0 ≤ split v P y := by
   obtain ⟨x, b⟩ := y
   rcases eq_or_ne b 0 with rfl | h0

@@ -58,10 +58,8 @@ theorem exists_isColouring_mean_add_sum_mem_convexHull (n : ℕ) :
     refine ⟨Fin.snoc ε' e, ?_, ?_⟩
     · intro i
       induction i using Fin.lastCases with
-      | last => rw [Fin.snoc_last]; exact he
-      | cast j => rw [Fin.snoc_castSucc]; exact hε' j
-    · rw [Fin.sum_univ_castSucc]
-      simp only [Fin.snoc_castSucc, Fin.snoc_last]
-      rwa [← add_assoc]
+      | last => simpa using he
+      | cast j => simpa using hε' j
+    · simpa [Fin.sum_univ_castSucc, add_assoc] using hfinal
 
 end Komlos

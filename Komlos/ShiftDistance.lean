@@ -60,20 +60,13 @@ lemma mass_le_overlap {P Q R : E →₀ ℝ} (hP : R ≤ P) (hQ : R ≤ Q) : mas
 lemma overlap_eq_one_sub_tvDist {P Q : E →₀ ℝ} (hP : IsDist P) (hQ : IsDist Q) :
     overlap P Q = 1 - tvDist P Q := by
   classical
-  have hPm : ∑ x ∈ P.support ∪ Q.support, P x = 1 := by
-    rw [← mass_eq_sum subset_union_left, hP.mass_eq]
-  have hQm : ∑ x ∈ P.support ∪ Q.support, Q x = 1 := by
-    rw [← mass_eq_sum subset_union_right, hQ.mass_eq]
-  have key : 2 * ∑ x ∈ P.support ∪ Q.support, min (P x) (Q x)
-      = (∑ x ∈ P.support ∪ Q.support, P x) + (∑ x ∈ P.support ∪ Q.support, Q x)
-        - ∑ x ∈ P.support ∪ Q.support, |P x - Q x| := by
-    rw [Finset.mul_sum, ← Finset.sum_add_distrib, ← Finset.sum_sub_distrib]
-    congr with x
-    rw [← min_add_max (P x) (Q x), abs_sub_comm, ← max_sub_min_eq_abs (P x) (Q x)]
-    ring
+  have hmin : ∀ x, min (P x) (Q x) = 2⁻¹ * (P x + Q x - |P x - Q x|) := fun x => by
+    grind
   rw [overlap_eq_sum subset_union_left subset_union_right,
-    tvDist_eq_sum subset_union_left subset_union_right]
-  linarith
+    tvDist_eq_sum subset_union_left subset_union_right, sum_congr rfl fun x _ => hmin x,
+    ← Finset.mul_sum, sum_sub_distrib, sum_add_distrib, ← mass_eq_sum subset_union_left,
+    ← mass_eq_sum subset_union_right, hP.mass_eq, hQ.mass_eq]
+  ring
 
 lemma shiftDist_eq_one_sub_overlap [AddCommGroup E] {P : E →₀ ℝ} (hP : IsDist P) (u : E) :
     shiftDist P u = 1 - overlap P (tr u P) := by
