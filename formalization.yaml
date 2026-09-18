@@ -1,0 +1,134 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Komlós conjecture"
+  description: >-
+    A Lean 4 and Mathlib formalization of the Komlós conjecture with explicit constant 36,
+    following the elementary proof of Karingula and Lovett: vectors of Euclidean norm at most 1
+    admit signs whose signed sum has supremum norm at most 36. The Beck–Fiala conjecture is
+    derived as a consequence: a hypergraph in which every vertex lies in at most t edges admits
+    a two-colouring in which every edge has discrepancy at most 36√t. The development defines
+    the discrepancy of a colouring and of a matrix, and proves that a real matrix whose columns
+    have Euclidean norm at most 1 has discrepancy at most 36.
+  authors:
+    - "Gabriel Dahia"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "Gabriel Dahia"
+
+classification:
+  arxiv: ["math.CO", "cs.DM"]
+  msc2020: ["11K38", "05C65", "05D40", "68R05"]
+
+sources:
+  - title: "An elementary proof of the Komlós conjecture"
+    authors:
+      - "Sankeerth Rao Karingula"
+      - "Shachar Lovett"
+    id: "ECCC TR26-188"
+    type: "article"
+    location: "https://eccc.weizmann.ac.il/report/2026/188/"
+    relationship: "formalizes"
+    note: >-
+      Lemma 1.4 (the splitting operator, Claim 3.2, the induction and the pullback) and
+      Theorem 1.2 are formalized as in the source. Lemma 1.5 is proved by a discrete variant of
+      the source's argument (see fidelity.divergences), and the final passage from rational to
+      real vectors avoids sequences by using the finiteness of the set of colourings.
+    license: "unknown"
+    author_endorsement: "not-contacted"
+  - title: "Vector balancing via directional total variation"
+    authors:
+      - "S. Guo"
+      - "E. X. Fang"
+      - "J. Lu"
+    id: "arXiv:2609.11189"
+    type: "article"
+    location: "https://arxiv.org/abs/2609.11189"
+    relationship: "background"
+    note: "The first proof of the Komlós conjecture, which the formalized proof simplifies."
+    license: "unknown"
+    author_endorsement: "not-contacted"
+
+related_formalizations: []
+
+status:
+  scope: >-
+    Formalized: the Komlós conjecture with constant 36 for vectors in a finite-dimensional
+    Euclidean space, stated for arbitrary finite index types (Challenge declaration
+    Komlos.exists_sign_forall_abs_sum_apply_le), and the Beck–Fiala conjecture with constant
+    36 for Mathlib hypergraphs with finitely many vertices (Challenge declaration
+    Komlos.exists_sign_forall_abs_finsum_le). The library also contains Lemmas 1.4 and 1.5
+    of the source and the matrix form of Theorem 1.2 in terms of the discrepancy of a matrix.
+    Not formalized: the strong (prefix) Komlós conjecture, which the source does not prove, and
+    the remarks of the source on algorithmic aspects and on prefix discrepancy bounds.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: []
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["Claude Opus 5"]
+      framework: "Claude Code"
+      tool_setup: >-
+        An AI coding agent read the source paper, planned the formalization, wrote all Lean
+        files, and iterated against the Lean compiler through a terminal. The human author set
+        the goal and gave direction on project structure, naming, the Lean module system, the
+        use of Mathlib's hypergraph API, and the discrepancy definitions.
+      cost:
+        wall_time: "about 1.5 hours"
+        spend_usd: "not tracked"
+        hardware: "local machine"
+      prompting_notes: >-
+        A single goal to formalize the proof of the source paper, followed by short
+        instructions on formatting for Palomar, the module system, module organisation, naming,
+        the statement of the Beck–Fiala consequence, and the definitions of discrepancy.
+  spend_usd: "not tracked"
+  notes: >-
+    The proof development was produced by an AI agent under the direction of the human author,
+    who specified the goal and the structural requirements. Mechanical checks: the project
+    builds with no sorry outside Challenge.lean, and the Challenge declarations are proved using
+    only propext, Classical.choice and Quot.sound.
+
+fidelity:
+  divergences: >-
+    (1) Lemma 1.5. The source constructs a continuous product density, bounds its directional
+    total variation by the fundamental theorem of calculus and Cauchy–Schwarz, and then rounds
+    to a grid. The formalization instead works directly on the grid with the discrete squared
+    tent: the square roots of the distribution and of its translate are compared in l², the
+    one-dimensional estimate follows from telescoping and the discrete Cauchy–Schwarz
+    inequality, and the product structure is handled by tensorising the Hellinger affinity
+    together with Weierstrass' product inequality. The resulting bound on the shift distance,
+    ‖v‖₂/√12, is the one stated in the source. (2) Theorem 1.2 for real vectors. The source
+    passes to a limit along a subsequence of rational approximations; the formalization shows
+    that the discrepancy is at most 36 + η for every η > 0, which avoids sequences. (3) The
+    Komlós statement is given for arbitrary finite index types, which specialises to vectors
+    v₁, …, vₙ ∈ ℝ^d. (4) The Beck–Fiala statement is the special case of the Komlós conjecture
+    noted in the introduction of the source, and is not stated as a theorem there.
+
+review:
+  status: "unreviewed"
+  reviewers:
+    - "none"
+  notes: >-
+    No independent human review yet. The formalizing agent checked that the two Challenge
+    statements have the same fully elaborated types (pp.all) as their Solution counterparts and
+    depend only on the permitted axioms. The Challenge statements use only Mathlib definitions
+    (EuclideanSpace, Hypergraph, finsum, Set.ncard).
+
+alignment:
+  namespace: "Komlos"
+  statements:
+    - source: "Theorem 1.2"
+      lean: "Komlos.exists_sign_forall_abs_sum_apply_le"
+    - source: "Theorem 1.2 (matrix form)"
+      lean: "Komlos.discrepancy_le_of_forall_sum_sq_le_one"
+    - source: "Lemma 1.4"
+      lean: "Komlos.exists_isColouring_mean_add_sum_mem_convexHull"
+    - source: "Lemma 1.5"
+      lean: "Komlos.exists_nearInvariant"
+    - source: "Claim 3.2"
+      lean: "Komlos.shiftDist_split_le"
+    - source: "Section 1, Beck–Fiala as a special case of Komlós"
+      lean: "Komlos.exists_sign_forall_abs_finsum_le"
