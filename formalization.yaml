@@ -4,7 +4,7 @@ version: "v0.4"
 project:
   name: "Komlós conjecture"
   description: >-
-    Lean4 formalization of the Komlós bound with constant 36 following the Lovett--Karingula
+    Lean4 formalization of the Komlós bound with constant 36 following the Lovett—Karingula
     exposition. The Komlós statement gives signs for finitely many vectors of Euclidean
     norm at most 1 so that the signed sum has supremum norm at most 36. The Beck–Fiala
     statement gives a vertex colouring with edge discrepancy at most 36√t when every
